@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>指见印象技师管理平台</title>
+    <style>
+        :root {
+            --background-gradient: linear-gradient(90deg, #B9D1F7 0.29%, #E4E0F7 99.54%);
+            --nav-background: #FFF;
+            --nav-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.25);
+            --text-color: #9BA9AC;
+            --active-color: #EB5757;
+        }
+
+        body {
+            background: var(--background-gradient);
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .nav_bar {
+            background: var(--nav-background);
+            box-shadow: var(--nav-shadow);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 35px 22px 35px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            font-size: 12px;
+            color: var(--text-color);
+        }
+
+        .nav-item.active {
+            color: var(--active-color);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+        }
+        .location-display {
+            position: absolute;
+            top: 13px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .location-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .location-text {
+            margin-left: 5px;
+            color: #0B0B0B;
+            font-size: 14px;
+        }
+        .user-avatar {
+            position: absolute;
+            top: 50px;
+            left: 20px;
+            width: 52px;
+            height: 52px;
+            border-radius: 52px;
+            background: lightgray 50% / cover no-repeat;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav_bar">
+        <a href="#" class="nav-item active" data-icon="home">
+            <img src="assets/icons/home_fill 1.svg" class="nav-icon" alt="首页">
+            <span>首页</span>
+        </a>
+        <a href="#" class="nav-item" data-icon="calendar">
+            <img src="assets/icons/calendar.svg" class="nav-icon" alt="日程">
+            <span>日程</span>
+        </a>
+        <a href="#" class="nav-item" data-icon="form">
+            <img src="assets/icons/form 1.svg" class="nav-icon" alt="订单">
+            <span>订单</span>
+        </a>
+        <a href="#" class="nav-item" data-icon="money_bag">
+            <img src="assets/icons/money_bag 1.svg" class="nav-icon" alt="账户">
+            <span>账户</span>
+        </a>
+        <a href="#" class="nav-item" data-icon="profile">
+            <img src="assets/icons/profile 2.svg" class="nav-icon" alt="我的">
+            <span>我的</span>
+        </a>
+    </nav>
+    <div class="location-display">
+        <img src="assets/icons/location.svg" alt="位置" class="location-icon">
+        <span class="location-text">正在获取位置...</span>
+    </div>
+    <div class="user-avatar" id="userAvatar"></div>
+    </div>
+
+    <script>
+        const iconMap = {
+            home: { default: "home 1.svg", active: "home_fill 1.svg" },
+            calendar: { default: "calendar.svg", active: "calendar_fill 1.svg" },
+            form: { default: "form 1.svg", active: "form_fill 1.svg" },
+            money_bag: { default: "money_bag 1.svg", active: "money_bag_fill 1.svg" },
+            profile: { default: "profile 2.svg", active: "profile_fill 1.svg" }
+        };
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // 移除所有项的active类
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                
+                // 为点击的项添加active类
+                this.classList.add('active');
+                
+                // 更新图标
+                const iconType = this.dataset.icon;
+                const img = this.querySelector('img');
+                img.src = `assets/icons/${iconMap[iconType].active}`;
+                
+                // 将其他图标恢复为未激活状态
+                document.querySelectorAll('.nav-item:not(.active)').forEach(otherItem => {
+                    const otherIconType = otherItem.dataset.icon;
+                    const otherImg = otherItem.querySelector('img');
+                    otherImg.src = `assets/icons/${iconMap[otherIconType].default}`;
+                });
+            });
+     
+            // 获取用户位置的函数
+        function getUserLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // 这里我们只是显示经纬度，实际应用中你可能需要使用反地理编码服务来获取可读的地址
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    document.querySelector('.location-text').textContent = `${latitude.toFixed(2)}, ${longitude.toFixed(2)}`;
+                }, function(error) {
+                    console.error("Error: " + error.message);
+                    document.querySelector('.location-text').textContent = "无法获取位置";
+                });
+            } else {
+                console.error("Geolocation is not supported by this browser.");
+                document.querySelector('.location-text').textContent = "不支持地理位置";
+            }
+        }
+
+        // 页面加载时获取位置
+        window.addEventListener('load', getUserLocation);
+        });
+         // 获取用户位置的函数
+         function getUserLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // 这里我们只是显示经纬度，实际应用中你可能需要使用反地理编码服务来获取可读的地址
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    document.querySelector('.location-text').textContent = `${latitude.toFixed(2)}, ${longitude.toFixed(2)}`;
+                }, function(error) {
+                    console.error("Error: " + error.message);
+                    document.querySelector('.location-text').textContent = "无法获取位置";
+                });
+            } else {
+                console.error("Geolocation is not supported by this browser.");
+                document.querySelector('.location-text').textContent = "不支持地理位置";
+            }
+        }
+         // 页面加载时获取位置
+        window.addEventListener('load', getUserLocation);
+
+        function getUserAvatar() {
+        // 这里应该是从用户账户获取头像URL的逻辑
+        // 为了示例，我们使用一个占位图片
+        const avatarUrl = 'https://example.com/user-avatar.jpg';
+        const userAvatar = document.getElementById('userAvatar');
+        userAvatar.style.backgroundImage = `url(${avatarUrl})`;
+        }
+          // 页面加载时获取位置和头像
+          window.addEventListener('load', () => {
+            getUserLocation();
+            getUserAvatar();
+        });
+
+    </script>
+</body>
+</html>
